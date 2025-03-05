@@ -11,7 +11,7 @@ app.use(cors());
 app.post("/project" , authMiddleware, async (req , res) => {
     const { prompt } = req.body;
     const userId = req.userId!;
-    //TODO: add logi to get useful name for the project from the prompt
+    //TODO: add logic to get useful name for the project from the prompt
     const description = prompt.split("\n")[0];
     const project = await prismaClient.project.create({
         data: {
@@ -26,8 +26,10 @@ app.get("/projects" , authMiddleware , async (req , res) => {
     const userId = req.userId!;
     try {
         const projects = await prismaClient.project.findMany({
-            where: {userId}
+            where: {userId},
+            orderBy: {createdAt: "desc"}
         });
+        console.log(projects);
         if (projects.length === 0) {
             res.status(400).json({error: "Project not found"});
             return;
